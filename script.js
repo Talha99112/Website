@@ -1,3 +1,4 @@
+// Portfolio Data
 const portfolioItems = [
   {
     title: "Corporate Essentials",
@@ -43,8 +44,55 @@ const portfolioItems = [
   }
 ];
 
-// Video Modal setup adjustment for Vimeo:
+// Initialize Portfolio Grid
+function initPortfolio() {
+  const grid = document.querySelector('.portfolio-grid');
+  portfolioItems.forEach(item => {
+    const project = document.createElement('div');
+    project.className = `portfolio-item`;
+    project.dataset.category = item.category;
 
+    project.innerHTML = `
+      <img src="https://i.vimeocdn.com/video/${item.videoId}_640.jpg" alt="${item.title}" class="portfolio-thumbnail" />
+      <div class="portfolio-overlay">
+        <span class="portfolio-category">${item.category === 'motion' ? 'Motion Graphics' : item.category === 'ui' ? 'UI Animations' : 'Stock Video Edits'}</span>
+        <h3 class="portfolio-title">${item.title}</h3>
+        <p class="portfolio-desc">${item.desc}</p>
+        <div class="portfolio-tags">
+          ${item.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+        </div>
+        <a href="#" class="view-btn" data-video="${item.videoId}">View Project</a>
+      </div>
+    `;
+    grid.appendChild(project);
+  });
+}
+
+// Filter Portfolio Items
+function setupFilters() {
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const portfolioItems = document.querySelectorAll('.portfolio-item');
+  
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      // Update active button
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      
+      // Filter items
+      const filter = btn.dataset.filter;
+      portfolioItems.forEach(item => {
+        if (filter === 'all' || item.dataset.category === filter) {
+          item.style.display = 'block';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    });
+  });
+}
+
+// Video Modal setup for Vimeo
 function setupModal() {
   const modal = document.getElementById('videoModal');
   const modalVideo = document.getElementById('modalVideo');
@@ -55,7 +103,6 @@ function setupModal() {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
       const videoId = btn.dataset.video;
-      // Vimeo embed URL with autoplay
       modalVideo.src = `https://player.vimeo.com/video/${videoId}?autoplay=1&title=0&byline=0&portrait=0`;
       modal.classList.add('active');
       document.body.style.overflow = 'hidden';
@@ -68,11 +115,4 @@ function setupModal() {
     document.body.style.overflow = 'auto';
   });
   
-  modal.addEventListener('click', (e) => {
-    if (e.target === modal) {
-      modal.classList.remove('active');
-      modalVideo.src = '';
-      document.body.style.overflow = 'auto';
-    }
-  });
-}
+  modal.addEventListener('click', (e)
